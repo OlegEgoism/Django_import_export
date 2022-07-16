@@ -23,10 +23,10 @@ def import_csv(request):
             empexceldata = pd.read_csv("." + excel_file, encoding='utf-8')
             dbframe = empexceldata
             for dbframe in dbframe.itertuples():
-                city = City.objects.update_or_create(name=dbframe.city)
-                job = Job.objects.update_or_create(name=dbframe.job)
-                product = People.objects.get_or_create(name=dbframe.name, age=dbframe.age, email=dbframe.email,
-                                                       city_id=city.id, job_id=job.id)
+                # city = City.objects.get(name=dbframe.city)
+                # job = Job.objects.get(name=dbframe.job)
+                product = People.objects.update_or_create(name=dbframe.name, age=dbframe.age, email=dbframe.email)
+                                                          # city_id=city.id, job_id=job.id)
                 print(product, 'Что отправилось')
             return render(request, 'importexcel.html', {'uploaded_file_url': uploaded_file_url})
     except Exception as identifier:
@@ -40,8 +40,8 @@ def export_csv(request):
         response = HttpResponse(content_type='')
         response['Content-Disposition'] = 'attachment; filename="DB.xlsx"'  # Название полученного файла из базы данных
         writer = csv.writer(response)
-        writer.writerow(['name', 'age', 'email', 'city', 'job'])  # Название колонок в Excel файле
-        users = People.objects.all().values_list('name', 'age', 'email', 'city__name', 'job__name')
+        writer.writerow(['name', 'age', 'email', ])  # 'city', 'job'])  # Название колонок в Excel файле
+        users = People.objects.all().values_list('name', 'age', 'email', )  # 'city__name', 'job__name')
         for user in users:
             writer.writerow(user)
         return response
